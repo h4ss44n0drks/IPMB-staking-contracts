@@ -8,10 +8,10 @@
  *  @author: IPMB Dev Team
  */
 
+pragma solidity ^0.8.19;
+
 import "./openzeppelin/Ownable.sol";
 import "./openzeppelin/Strings.sol";
-
-pragma solidity ^0.8.19;
 
 contract PriceFeed is Ownable {
 
@@ -48,7 +48,7 @@ contract PriceFeed is Ownable {
         admin[msg.sender] = true;
         ipmb[0] = _ipmb;
         gold[0] = _gold;
-        epochAvgPriceHash[0] = keccak256((abi.encodePacked(_ipmb.toString() , _gold.toString())));
+        epochAvgPriceHash[0] = keccak256((abi.encodePacked(_ipmb.toString(), _gold.toString())));
         epochDataSetHash[0] = _epochDataSetHash;
         epochTS[0] = block.timestamp;
         latestTS = block.timestamp;
@@ -64,7 +64,7 @@ contract PriceFeed is Ownable {
         uint256 curEpoch = nextEpoch;
         ipmb[curEpoch] = _ipmb;
         gold[curEpoch] = _gold;
-        epochAvgPriceHash[curEpoch] = keccak256((abi.encodePacked(_ipmb.toString() , _gold.toString())));
+        epochAvgPriceHash[curEpoch] = keccak256((abi.encodePacked(_ipmb.toString(), _gold.toString())));
         epochDataSetHash[curEpoch] = _epochDataSetHash;
         epochTS[curEpoch] = block.timestamp;
         latestTS = block.timestamp;

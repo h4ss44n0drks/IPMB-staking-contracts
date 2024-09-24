@@ -8,11 +8,11 @@
  *  @author: IPMB Dev Team
  */
 
+pragma solidity ^0.8.19;
+
 import "./IERC20.sol";
 import "./openzeppelin/Ownable.sol";
 import "./IPriceFeed.sol";
-
-pragma solidity ^0.8.19;
 
 contract IPMBStaking is Ownable {
 
@@ -92,7 +92,8 @@ contract IPMBStaking is Ownable {
 
     // function to register a Pool
 
-    function registerPool(string memory _poolName, uint256 _duration, uint256 _discount, uint256 _amount, uint256 _lockDuration, uint256 _poolMax) public onlyAdmin {
+    function registerPool(string memory _poolName, uint256 _duration, uint256 _discount,
+                                 uint256 _amount, uint256 _lockDuration, uint256 _poolMax) public onlyAdmin {
         require(_duration > 0 && _amount > 0 , "err");
         require(_discount >= 2 && _discount <= 20);
         uint256 poolID = nextpoolCounter;
