@@ -3,13 +3,13 @@
 /**
  *
  *  @title: IPMB Staking Pools
- *  @date: ??-September-2024
- *  @version: 1.8
+ *  @date: 20-September-2024
+ *  @version: 1.9
  *  @author: IPMB Dev Team
  */
 
 import "./IERC20.sol";
-import "./Ownable.sol";
+import "./openzeppelin/Ownable.sol";
 import "./IPriceFeed.sol";
 
 pragma solidity ^0.8.19;
@@ -58,6 +58,7 @@ contract IPMBStaking is Ownable {
     address public ipmbAddress;
     IPriceFeed public priceFeedAddress;
     address public gemContract;
+    uint256 blackPeriod;
 
     // modifiers
 
@@ -81,11 +82,12 @@ contract IPMBStaking is Ownable {
 
     // constructor
 
-    constructor (address _ipmbAddress, address _priceFeedAddress) {
+    constructor (address _ipmbAddress, address _priceFeedAddress, uint256 _blackPeriod) {
         admin[msg.sender] = true;
         ipmbAddress = _ipmbAddress;
         nextpoolCounter = 1;
         priceFeedAddress = IPriceFeed(_priceFeedAddress);
+        blackPeriod = _blackPeriod;
     }
 
     // function to register a Pool
@@ -204,6 +206,12 @@ contract IPMBStaking is Ownable {
         IERC20(ipmbAddress).approve(gemContract, _amount);
     }
 
+    // function to modify the time that the blacklist funds can be withdrawl
+
+    function changeBlackPeriod(uint256 _blackPeriod) public onlyAdmin {
+        blackPeriod = _blackPeriod;
+    }
+
     // function to update address kyc status
 
     function updateKYCAddress(address _address, bool _status) public onlyAdmin {
@@ -220,17 +228,17 @@ contract IPMBStaking is Ownable {
 
     // function to withdrawl blacklist amount
 
-    function blacklistAddressWithdrawalPool(address _address, uint256 _poolID, uint256 _index) public onlyOwner {
+    function blacklistAddressWithdrawalPool(address _receiver, address _address, uint256 _poolID, uint256 _index) public onlyOwner {
         require(blacklist[_address] == true, "Address is not blacklisted");
         require(addressDataNew[_address][_poolID][_index].amount == poolsRegistry[_poolID].amount, "No deposit");
-        require(block.timestamp >= addressDataNew[_address][_poolID][_index].dateDeposit + 30, "Time has not passed");
+        require(block.timestamp >= addressDataNew[_address][_poolID][_index].dateDeposit + blackPeriod, "Time has not passed");
         uint256 amount = addressDataNew[_address][_poolID][_index].amount;
         addressDataNew[_address][_poolID][_index].amount = 0;
         addressDataNew[_address][_poolID][_index].dateDeposit = 0;
         addressDataNew[_address][_poolID][_index].epoch = 0;
         addressDataNew[_address][_poolID][_index].ipmbPrice = 0;
         addressDataNew[_address][_poolID][_index].goldPrice = 0;
-        IERC20(ipmbAddress).transfer(msg.sender, amount);
+        IERC20(ipmbAddress).transfer(_receiver, amount);
         emit blacklistWithdrawal(_poolID, _address, _index, amount);
     }
 
