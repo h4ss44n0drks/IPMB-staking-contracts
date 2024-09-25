@@ -1,6 +1,2 @@
 node_modules
 contracts/Migrations.sol
-contracts/openzeppelin/Math.sol
-contracts/openzeppelin/Ownable.sol
-contracts/openzeppelin/SignedMath.sol
-contracts/openzeppelin/Strings.sol

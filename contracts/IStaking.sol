@@ -2,10 +2,7 @@
 
 /**
  *
- *  @title: Interface for the IPMB Staking contract
- *  @date: 20-September-2024
- *  @version: 1.9
- *  @author: IPMB Dev Team
+ * @title Interface of the IPMB Staking contract
  */
 
 pragma solidity ^0.8.5;
@@ -33,4 +30,5 @@ interface IStaking {
     function retrieveKYCStatus(address _address) external view returns (bool);
 
     function retrieveBlackListStatus(address _address) external view returns (bool);
+
 }

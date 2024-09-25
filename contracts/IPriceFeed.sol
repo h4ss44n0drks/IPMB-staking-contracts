@@ -2,10 +2,7 @@
 
 /**
  *
- *  @title: IPMB Price Feed Interface for IPMB and Gold prices
- *  @date: 20-September-2024
- *  @version: 1.9
- *  @author: IPMB Dev Team
+ * @title IPMB and Gold Price Feed Interface
  */
 
 pragma solidity ^0.8.5;
