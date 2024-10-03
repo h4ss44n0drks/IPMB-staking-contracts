@@ -11,6 +11,8 @@ coverage.json
 coverageEnv/
 scTopics
 allFiredEvents
+.soliumignore
+.soliumrc
 
 .DS_Store
 
