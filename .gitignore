@@ -1,5 +1,9 @@
 .idea/
 node_modules/
+artifacts/
+smart contracts & tests/cache/
+cache/
+cache
 build/
 abi-out/
 coverage/
