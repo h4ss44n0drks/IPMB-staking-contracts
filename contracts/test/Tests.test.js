@@ -385,4 +385,147 @@ describe("IPMB Staking tests", function () {
 
   }) // end check discount
 
+  context("Full Test as Address 3", () => {
+
+    // transfer tokens to address 3
+    it("#transferTokens", async function () {
+      await contracts.hhIPMB.transfer(
+        signers.addr3.address, // _receiver
+        BigInt(10000000000000000000), // _amount
+      )
+    })
+
+    // add Address 3 to KYC
+    it("#addKYC", async function () {
+      await contracts.hhIPMBStaking.updateKYCAddress(
+        signers.addr3.address,
+        true
+      )
+    })
+
+    // approve tokens as address 3
+    it("#approveTokens", async function () {
+      await contracts.hhIPMB.connect(signers.addr3).approve(
+        contracts.hhIPMBStaking,
+        BigInt(10000000000000000000) // 10 IPMB
+      )
+    })
+
+    // deposit to pool 1 as address 3
+    it("#depositPool", async function () {
+      await contracts.hhIPMBStaking.connect(signers.addr3).depositPool(
+        1
+      )
+    })
+
+    // blacklist address 3
+    it("#blackListWallet", async function () {
+      await contracts.hhIPMBStaking.addBlacklist(
+        signers.addr3.address, // _address
+        1, // _status
+      )
+    })
+
+    // withdrawal pool
+    it("#withdrawalPool", async function () {
+      await time.increase(310);
+      expect(contracts.hhIPMBStaking.withdrawalPool(
+        1, // _poolId
+        0, // _index
+      )).to.be.revertedWith("Address is blacklisted");
+    })
+
+    // deposit blocked due to blacklist
+    it("#depositBlockedBlacklist", async function () {
+      expect(contracts.hhIPMBStaking.connect(signers.addr3).depositPool(
+        1, // _poolId
+      )).to.be.revertedWith("Address is blacklisted"); //
+    })
+
+    // remove from blacklist address 3
+    it("#blackListWallet", async function () {
+      await contracts.hhIPMBStaking.addBlacklist(
+        signers.addr3.address, // _address
+        0, // _status
+      )
+    })
+
+    // remove KYC status of Address 3
+    it("#removeKYC", async function () {
+      await contracts.hhIPMBStaking.updateKYCAddress(
+        signers.addr3.address,
+        false
+      )
+    })
+
+    // deposit blocked due to KYC
+    it("#depositBlockedKYC", async function () {
+      expect(contracts.hhIPMBStaking.connect(signers.addr3).depositPool(
+        1, // _poolId
+      )).to.be.revertedWith("No KYC"); //
+    })
+
+    // add Address 3 to KYC
+    it("#addKYC", async function () {
+      await contracts.hhIPMBStaking.updateKYCAddress(
+        signers.addr3.address,
+        true
+      )
+    })
+
+    // deposit to pool 1 as address 3 (2nd deposit)
+    it("#depositPool", async function () {
+      await contracts.hhIPMBStaking.connect(signers.addr3).depositPool(
+        1
+      )
+    })
+
+    // deposit to pool 2 as address 3 (1st deposit)
+    it("#depositPool", async function () {
+      await contracts.hhIPMBStaking.connect(signers.addr3).depositPool(
+        2
+      )
+    })
+
+    // withdrawal 1st deposit
+    it("#withdrawalPool", async function () {
+      await time.increase(610);
+      await contracts.hhIPMBStaking.connect(signers.addr3).withdrawalPool(
+        1, // _poolId
+        0, // _index
+      )
+    })
+
+    // check discount of 1st deposit (pool 1) --> 0% as it was withdrew
+    it("#discount", async function () {
+      await time.increase(1250);
+      expect(await contracts.hhIPMBStaking.getDiscount(
+        1, // _poolId
+        signers.addr3.address, // _address
+        0, // _index
+      )).to.equal(0);
+    })
+
+    // check discount of 2nd deposit (pool 1) --> 2%
+    it("#discount", async function () {
+      await time.increase(1250);
+      expect(await contracts.hhIPMBStaking.getDiscount(
+        1, // _poolId
+        signers.addr3.address, // _address
+        1, // _index
+      )).to.equal(2);
+    })
+
+    // check discount of 1st deposit (pool 2) --> 2%
+    it("#discount", async function () {
+      await time.increase(1250);
+      expect(await contracts.hhIPMBStaking.getDiscount(
+        2, // _poolId
+        signers.addr3.address, // _address
+        0, // _index
+      )).to.equal(11);
+    })
+
+  }) // end full test
+
 })
