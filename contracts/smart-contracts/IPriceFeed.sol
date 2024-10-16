@@ -13,6 +13,6 @@ interface IPriceFeed {
 
     function getEpochPrices(uint256 _epoch) external view returns (uint256, uint256, bytes32, uint256);
 
-    function getEpochDatasetHash(uint256 _epoch) external view returns (bytes32);
+    function getEpochDataSetHash(uint256 _epoch) external view returns (bytes32, bytes32);
 
 }

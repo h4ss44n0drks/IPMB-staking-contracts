@@ -238,11 +238,32 @@ describe("IPMB Staking tests", function () {
       await contracts.hhPriceFeed.setData(
         100, // _ipmb
         100, // _gold
-        "0xb047e579b8b1137f701bc06244910b003606bdf93dad956463dca8822d854ebf", // _datasethash
+        "0xe2f2af72d4dc39d12179077867ef9d726b5b8430acd5357fa00503c0e56bd69f", // _epochIPMBDataSetHash
+        "0x070b4e17a7a1f2158be12744e9f839c622931c6df32aa8342a66f7710e4a1c14", // _epochGoldDataSetHash
       )
     })
 
   }) // end new epoch
+
+  context("Check Dtaaset Hashes", () => {
+
+    it("#checkIPMBHases 0 epoch", async function () {
+      const [ipmb, gold] = await contracts.hhPriceFeed.getEpochDataSetHash(
+        0 // _epoch
+      )
+      expect(ipmb).to.equal("0x4df817a31b2b68719ac77978bef933d23d0daeacaba2e1d7d501635ef3f32580"); // if other fails
+      expect(gold).to.equal("0x37be355583a126f6df64b523391a3adae33d27c6323930461f04b72db0700c2b"); // if other fails
+    })
+
+    it("#checkIPMBHases 1 epoch", async function () {
+      const [ipmb, gold] = await contracts.hhPriceFeed.getEpochDataSetHash(
+        1 // _epoch
+      )
+      expect(ipmb).to.equal("0xe2f2af72d4dc39d12179077867ef9d726b5b8430acd5357fa00503c0e56bd69f"); // if other fails
+      expect(gold).to.equal("0x070b4e17a7a1f2158be12744e9f839c622931c6df32aa8342a66f7710e4a1c14"); // if other fails
+    })
+
+  }) // check dataset hash
 
   context("Deposit As Address 2", () => {
 

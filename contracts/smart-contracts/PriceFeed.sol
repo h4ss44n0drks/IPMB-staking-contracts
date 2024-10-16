@@ -3,8 +3,8 @@
 /**
  *
  *  @title: IPMB Price Feed Contract
- *  @date: 25-September-2024
- *  @version: 1.9
+ *  @date: 16-October-2024
+ *  @version: 2.0
  *  @author: IPMB Dev Team
  */
 
@@ -21,7 +21,8 @@ contract PriceFeed is Ownable {
     mapping (uint256 => uint256) public ipmb;
     mapping (uint256 => uint256) public gold;
     mapping (uint256 => bytes32) public epochAvgPriceHash;
-    mapping (uint256 => bytes32) public epochDataSetHash;
+    mapping (uint256 => bytes32) public epochGoldDataSetHash;
+    mapping (uint256 => bytes32) public epochIPMBDataSetHash;
     mapping (uint256 => uint256) public epochTS;
 
     // variables declaration
@@ -40,35 +41,37 @@ contract PriceFeed is Ownable {
 
     // events
 
-    event EpochData(uint256 indexed epoch, uint256 indexed ipmb, uint256 indexed gold, bytes32 avgpricehash, bytes32 datasethash, uint256 ts);
+    event EpochData(uint256 indexed epoch, uint256 indexed ipmb, uint256 indexed gold, bytes32 avgpricehash, bytes32 datasetIPMBhash, bytes32 datasetGoldhash, uint256 ts);
 
     // constructor
 
-    constructor(uint256 _ipmb, uint256 _gold, bytes32 _epochDataSetHash, uint256 _epochInterval) {
+    constructor(uint256 _ipmb, uint256 _gold, bytes32 _epochIPMBDataSetHash, bytes32 _epochGoldDataSetHash, uint256 _epochInterval) {
         admin[msg.sender] = true;
         ipmb[0] = _ipmb;
         gold[0] = _gold;
         epochAvgPriceHash[0] = keccak256((abi.encodePacked(_ipmb.toString() , _gold.toString())));
-        epochDataSetHash[0] = _epochDataSetHash;
+        epochIPMBDataSetHash[0] = _epochIPMBDataSetHash;
+        epochGoldDataSetHash[0] = _epochGoldDataSetHash;
         epochTS[0] = block.timestamp;
         latestTS = block.timestamp;
         epochInterval = _epochInterval;
-        emit EpochData(0, ipmb[0], gold[0], epochAvgPriceHash[0], epochDataSetHash[0], epochTS[0]);
+        emit EpochData(0, ipmb[0], gold[0], epochAvgPriceHash[0], epochIPMBDataSetHash[0], epochGoldDataSetHash[0], epochTS[0]);
         nextEpoch = nextEpoch + 1;
     }
 
     // set epoch data
 
-    function setData(uint256 _ipmb, uint256 _gold, bytes32 _epochDataSetHash) public onlyAdmin {
+    function setData(uint256 _ipmb, uint256 _gold, bytes32 _epochIPMBDataSetHash, bytes32 _epochGoldDataSetHash) public onlyAdmin {
         require (block.timestamp >= latestTS + epochInterval, "1 epoch per interval"); 
         uint256 curEpoch = nextEpoch;
         ipmb[curEpoch] = _ipmb;
         gold[curEpoch] = _gold;
         epochAvgPriceHash[curEpoch] = keccak256((abi.encodePacked(_ipmb.toString() , _gold.toString())));
-        epochDataSetHash[curEpoch] = _epochDataSetHash;
+        epochIPMBDataSetHash[curEpoch] = _epochIPMBDataSetHash;
+        epochGoldDataSetHash[curEpoch] = _epochGoldDataSetHash;
         epochTS[curEpoch] = block.timestamp;
         latestTS = block.timestamp;
-        emit EpochData(curEpoch, ipmb[curEpoch], gold[curEpoch], epochAvgPriceHash[curEpoch], epochDataSetHash[curEpoch], epochTS[curEpoch]);
+        emit EpochData(curEpoch, ipmb[curEpoch], gold[curEpoch], epochAvgPriceHash[curEpoch], epochIPMBDataSetHash[curEpoch], epochGoldDataSetHash[curEpoch], epochTS[curEpoch]);
         nextEpoch = nextEpoch + 1;
     }
 
@@ -85,10 +88,10 @@ contract PriceFeed is Ownable {
         return (ipmb[_epoch], gold[_epoch], epochAvgPriceHash[_epoch], epochTS[_epoch]);
     }
 
-    // retrieve data for specific epoch
+    // retrieve dataset hases for specific epoch
 
-    function getEpochDatasetHash(uint256 _epoch) public view returns (bytes32) {
-        return (epochDataSetHash[_epoch]);
+    function getEpochDataSetHash(uint256 _epoch) public view returns (bytes32, bytes32) {
+        return (epochIPMBDataSetHash[_epoch], epochGoldDataSetHash[_epoch]);
     }
 
     // update admin status
