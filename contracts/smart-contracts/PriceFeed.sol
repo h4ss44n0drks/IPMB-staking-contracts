@@ -88,7 +88,7 @@ contract PriceFeed is Ownable {
         return (ipmb[_epoch], gold[_epoch], epochAvgPriceHash[_epoch], epochTS[_epoch]);
     }
 
-    // retrieve dataset hases for specific epoch
+    // retrieve dataset hashes for specific epoch
 
     function getEpochDataSetHash(uint256 _epoch) public view returns (bytes32, bytes32) {
         return (epochIPMBDataSetHash[_epoch], epochGoldDataSetHash[_epoch]);
