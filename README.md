@@ -7,11 +7,11 @@ This repo provides information regards to the Price Feed and Staking smart contr
 
 Deployed version: v1.9
 
-IPMB Token (IPMBT): 0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214
+*IPMB Token (IPMBT):* [0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214](https://www.oklink.com/amoy/address/0xff22c94ffb6bb5d1df18beb5fd1dfe7583d3b214)
 
-Price Feed Contract: 0xf039131761e4834de0a52746efc21105e479ce68
+*Price Feed Contract:* [0xf039131761e4834de0a52746efc21105e479ce68](https://www.oklink.com/amoy/address/0xf039131761e4834de0a52746efc21105e479ce68)
 
-IPMB Staking Contract: 0xecc9fc8e77f1c992d9db568761a69af453337950
+*IPMB Staking Contract:* [0xecc9fc8e77f1c992d9db568761a69af453337950](https://www.oklink.com/amoy/address/0xecc9fc8e77f1c992d9db568761a69af453337950)
 
 ## Tests
 
