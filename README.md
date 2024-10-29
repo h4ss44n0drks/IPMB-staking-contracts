@@ -5,7 +5,7 @@ This repo provides information regards to the Price Feed and Staking smart contr
 
 ## On Amoy Testnet
 
-Deployed version: v1.9
+Deployed version: v2.0
 
 *IPMB Token (IPMBT):* [0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214](https://www.oklink.com/amoy/address/0xff22c94ffb6bb5d1df18beb5fd1dfe7583d3b214)
 
