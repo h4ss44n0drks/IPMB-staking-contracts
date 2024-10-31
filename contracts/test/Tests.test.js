@@ -233,19 +233,36 @@ describe("IPMB Staking tests", function () {
 
   context("Change Epoch", () => {
 
+    it("#checkData of epoch 0", async function () {
+      const [, ipmb, gold, golddaily, ,] = await contracts.hhPriceFeed.getLatestPrices()
+      expect(ipmb).to.equal("80"); // if other fails
+      expect(gold).to.equal("80"); // if other fails
+      expect(golddaily).to.equal("100"); // if other fails
+    })
+
     it("#addEpoch", async function () {
       await time.increase(110);
       await contracts.hhPriceFeed.setData(
         100, // _ipmb
         100, // _gold
+        120, // _goldDaily
         "0xe2f2af72d4dc39d12179077867ef9d726b5b8430acd5357fa00503c0e56bd69f", // _epochIPMBDataSetHash
         "0x070b4e17a7a1f2158be12744e9f839c622931c6df32aa8342a66f7710e4a1c14", // _epochGoldDataSetHash
       )
     })
 
+    it("#checkData of epoch 1", async function () {
+      const [ipmb, gold, golddaily, ,] = await contracts.hhPriceFeed.getEpochPrices(
+        1 // _epoch
+      )
+      expect(ipmb).to.equal("100"); // if other fails
+      expect(gold).to.equal("100"); // if other fails
+      expect(golddaily).to.equal("120"); // if other fails
+    })
+
   }) // end new epoch
 
-  context("Check Dtaaset Hashes", () => {
+  context("Check Dataset Hashes", () => {
 
     it("#checkIPMBHases 0 epoch", async function () {
       const [ipmb, gold] = await contracts.hhPriceFeed.getEpochDataSetHash(

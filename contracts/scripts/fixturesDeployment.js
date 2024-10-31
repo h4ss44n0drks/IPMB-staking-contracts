@@ -23,6 +23,7 @@ const fixturesDeployment = async () => {
   const hhPriceFeed = await priceFeed.deploy(
     80,
     80,
+    100,
     "0x4df817a31b2b68719ac77978bef933d23d0daeacaba2e1d7d501635ef3f32580",
     "0x37be355583a126f6df64b523391a3adae33d27c6323930461f04b72db0700c2b",
     100

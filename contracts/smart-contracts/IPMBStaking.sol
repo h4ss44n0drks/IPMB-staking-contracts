@@ -3,8 +3,8 @@
 /**
  *
  *  @title: IPMB Staking Pools
- *  @date: 25-September-2024
- *  @version: 1.9
+ *  @date: 31-October-2024
+ *  @version: 2.2
  *  @author: IPMB Dev Team
  */
 
@@ -57,7 +57,7 @@ contract IPMBStaking is Ownable {
     uint256 public withdrawalDuration;
     address public ipmbAddress;
     IPriceFeed public priceFeedAddress;
-    address public gemContract;
+    address public gemMintingContract;
     uint256 blackPeriod;
 
     // modifiers
@@ -116,7 +116,7 @@ contract IPMBStaking is Ownable {
         require(poolsRegistry[_poolID].poolMax > addressArray[msg.sender][_poolID].length, "Already deposited max times");
         require(poolsRegistry[_poolID].status == true, "Pool is inactive");
         require(IERC20(ipmbAddress).balanceOf(msg.sender) >= poolsRegistry[_poolID].amount, "Your ERC20 balance is not enough");
-        (uint256 epoch, uint256 ipmbPrice, uint256 goldPrice, ,) = priceFeedAddress.getLatestPrices();
+        (uint256 epoch, uint256 ipmbPrice, uint256 goldPrice, , ,) = priceFeedAddress.getLatestPrices();
         uint256 count = addressCounter[msg.sender][_poolID];
         addressDataNew[msg.sender][_poolID][count].amount = poolsRegistry[_poolID].amount;
         addressDataNew[msg.sender][_poolID][count].dateDeposit = block.timestamp;
@@ -161,7 +161,7 @@ contract IPMBStaking is Ownable {
     // function to update address pool details after nft minting
 
     function updateAddressPool(address _address, uint256 _poolID, uint256 _index) public {
-        require(msg.sender == gemContract, "Not allowed");
+        require(msg.sender == gemMintingContract, "Not allowed");
         addressDataNew[_address][_poolID][_index].amount = 0;
         addressDataNew[_address][_poolID][_index].dateDeposit = 0;
         addressDataNew[_address][_poolID][_index].epoch = 0;
@@ -188,10 +188,10 @@ contract IPMBStaking is Ownable {
         blacklist[_address] = _status;
     }
 
-    // function to set GeMNFTs contract
+    // function to set GEM minting contract
 
-    function setgemContract(address _address) public onlyOwner {
-        gemContract = _address;
+    function setGEMMintingContract(address _address) public onlyOwner {
+        gemMintingContract = _address;
     }
 
     // function to update prices contract admin
@@ -200,10 +200,10 @@ contract IPMBStaking is Ownable {
         priceFeedAddress = IPriceFeed(_address);
     }
 
-    // function to approve gemContract
+    // function to approve GEM minting contract
 
-    function approveGemContract(uint256 _amount) public onlyAdmin {
-        IERC20(ipmbAddress).approve(gemContract, _amount);
+    function approveGEMMintingContract(uint256 _amount) public onlyAdmin {
+        IERC20(ipmbAddress).approve(gemMintingContract, _amount);
     }
 
     // function to modify the time that the blacklist funds can be withdrawl
@@ -268,6 +268,12 @@ contract IPMBStaking is Ownable {
 
     function poolStatus(uint256 _poolID) public view returns (bool) {
         return (poolsRegistry[_poolID].status);
+    }
+
+    // retrieve pool discount
+
+    function poolDiscount(uint256 _poolID) public view returns (uint256) {
+        return (poolsRegistry[_poolID].discount);
     }
 
     // retrieve deposit amount

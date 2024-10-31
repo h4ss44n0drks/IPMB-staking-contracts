@@ -31,4 +31,10 @@ interface IStaking {
 
     function retrieveBlackListStatus(address _address) external view returns (bool);
 
+    function withdrawalPool(uint256 _poolID, uint256 _index) external;
+
+    function depositPool(uint256 _poolID) external;
+
+    function poolDiscount(uint256 _poolID) external view returns (uint256);
+
 }
