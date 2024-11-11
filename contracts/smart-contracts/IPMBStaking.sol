@@ -3,8 +3,8 @@
 /**
  *
  *  @title: IPMB Staking Pools
- *  @date: 31-October-2024
- *  @version: 2.2
+ *  @date: 07-November-2024
+ *  @version: 2.3
  *  @author: IPMB Dev Team
  */
 
@@ -54,11 +54,12 @@ contract IPMBStaking is Ownable {
     // variables declaration
 
     uint256 public nextpoolCounter;
-    uint256 public withdrawalDuration;
     address public ipmbAddress;
     IPriceFeed public priceFeedAddress;
     address public gemMintingContract;
-    uint256 blackPeriod;
+    uint256 public blackPeriod;
+    uint256 public minDiscount;
+    uint256 public maxDiscount;
 
     // modifiers
 
@@ -88,13 +89,15 @@ contract IPMBStaking is Ownable {
         nextpoolCounter = 1;
         priceFeedAddress = IPriceFeed(_priceFeedAddress);
         blackPeriod = _blackPeriod;
+        minDiscount = 2;
+        maxDiscount = 11;
     }
 
     // function to register a Pool
 
     function registerPool(string memory _poolName, uint256 _duration, uint256 _discount, uint256 _amount, uint256 _lockDuration, uint256 _poolMax) public onlyAdmin {
         require(_duration > 0 && _amount > 0 , "err");
-        require(_discount >= 2 && _discount <= 20);
+        require(_discount >= minDiscount && _discount <= maxDiscount, "Check min & max");
         uint256 poolID = nextpoolCounter;
         poolsRegistry[poolID].poolID = poolID;
         poolsRegistry[poolID].poolName = _poolName;
@@ -113,8 +116,8 @@ contract IPMBStaking is Ownable {
     function depositPool(uint256 _poolID) public {
         require(kycAddress[msg.sender] == true, "No KYC");
         require(blacklist[msg.sender] == false, "Address is blacklisted");
-        require(poolsRegistry[_poolID].poolMax > addressArray[msg.sender][_poolID].length, "Already deposited max times");
         require(poolsRegistry[_poolID].status == true, "Pool is inactive");
+        require(poolsRegistry[_poolID].poolMax > addressArray[msg.sender][_poolID].length, "Already deposited max times");
         require(IERC20(ipmbAddress).balanceOf(msg.sender) >= poolsRegistry[_poolID].amount, "Your ERC20 balance is not enough");
         (uint256 epoch, uint256 ipmbPrice, uint256 goldPrice, , ,) = priceFeedAddress.getLatestPrices();
         uint256 count = addressCounter[msg.sender][_poolID];
@@ -127,6 +130,17 @@ contract IPMBStaking is Ownable {
         addressCounter[msg.sender][_poolID]++;
         IERC20(ipmbAddress).transferFrom(msg.sender, address(this), poolsRegistry[_poolID].amount);
         emit poolDeposit(_poolID, msg.sender, count, poolsRegistry[_poolID].amount);
+    }
+
+    // function to deposit multitimes
+
+    function multiDepositPool(uint256[] memory _poolIDs, uint256[] memory _quantity) public {
+        require(_poolIDs.length == _quantity.length , "Check lengths");
+        for (uint256 i = 0; i < _poolIDs.length; i++) {
+            for (uint256 y = 0; y < _quantity[i]; y++) {
+                depositPool(_poolIDs[i]);
+            }
+        }
     }
 
     // function to withdrawl deposit amounts
@@ -220,6 +234,13 @@ contract IPMBStaking is Ownable {
 
     // function to update address kyc status
 
+    function updateMinMaxDiscounts(uint256 _min, uint256 _max) public onlyAdmin {
+        minDiscount = _min;
+        maxDiscount = _max;
+    }
+
+    // function to update address kyc status
+
     function updateKYCAddressBatch(address[] memory _address, bool[] memory _status) public onlyAdmin {
         for (uint256 i = 0; i < _address.length; i++) {
             kycAddress[_address[i]] = _status[i];
@@ -254,8 +275,8 @@ contract IPMBStaking is Ownable {
 
     // retrieve pool info
 
-    function poolInfo(uint256 _poolID) public view returns (uint256, string memory, uint256, uint256, uint256, uint256, bool) {
-        return (poolsRegistry[_poolID].poolID, poolsRegistry[_poolID].poolName, poolsRegistry[_poolID].duration, poolsRegistry[_poolID].amount, poolsRegistry[_poolID].discount, poolsRegistry[_poolID].lockDuration, poolsRegistry[_poolID].status);
+    function poolInfo(uint256 _poolID) public view returns (string memory, uint256, uint256, uint256, uint256, uint256, bool) {
+        return (poolsRegistry[_poolID].poolName, poolsRegistry[_poolID].duration, poolsRegistry[_poolID].amount, poolsRegistry[_poolID].discount, poolsRegistry[_poolID].lockDuration, poolsRegistry[_poolID].poolMax, poolsRegistry[_poolID].status);
     }
 
     // retrieve pool price

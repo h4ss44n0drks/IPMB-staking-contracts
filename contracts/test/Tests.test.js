@@ -36,7 +36,7 @@ describe("IPMB Staking tests", function () {
         2,// _discount
         BigInt(1000000000000000000), // _amount 1 IPMB
         300, // _lockDuration
-        3, // _poolMax
+        5, // _poolMax
       )
     })
 
@@ -218,7 +218,7 @@ describe("IPMB Staking tests", function () {
     it("#approveTokens", async function () {
       await contracts.hhIPMB.connect(signers.addr2).approve(
         contracts.hhIPMBStaking,
-        BigInt(10000000000000000000) // 10 IPMB
+        BigInt(100000000000000000000) // 100 IPMB
       )
     })
 
@@ -325,7 +325,7 @@ describe("IPMB Staking tests", function () {
         11,// _discount
         BigInt(2500000000000000000), // _amount 1 IPMB
         600, // _lockDuration
-        2, // _poolMax
+        4, // _poolMax
       )
     })
 
@@ -565,5 +565,50 @@ describe("IPMB Staking tests", function () {
     })
 
   }) // end full test
+
+  context("Check Multi Deposits", () => {
+
+    // remove blacklist
+    it("#blackListWallet", async function () {
+      await contracts.hhIPMBStaking.addBlacklist(
+        signers.owner.address, // _address
+        0, // _status
+      )
+    })
+
+    // multi deposits
+    it("#multiDepositPool", async function () {
+      await contracts.hhIPMBStaking.multiDepositPool(
+        [1,2], // _poolIDs
+        [1,4], // _quantity
+      )
+    })
+
+    it("#withdrawalPool", async function () {
+      await time.increase(600);
+      await contracts.hhIPMBStaking.withdrawalPool(
+        2, // _poolId
+        3, // _index
+      )
+    })
+
+    // single deposit
+    it("#singleDeposit", async function () {
+      await contracts.hhIPMBStaking.depositPool(
+        2, // _poolID
+      )
+    })
+
+    it("#poolAmount", async function () {
+      const amount = await contracts.hhIPMBStaking.poolAmountPerAddress(
+        2, // _poolId
+        signers.owner.address, // _address
+        4 // _index
+      )
+      expect(amount).equal(BigInt(2500000000000000000)); //
+    })
+
+
+  }) // end multi deposit test
 
 })
