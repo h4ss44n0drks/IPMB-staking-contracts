@@ -5,13 +5,11 @@ This repo provides information regards to the Price Feed and Staking smart contr
 
 ## On Amoy Testnet
 
-Deployed version: v2.2
+*IPMB Token (IPMBT) - v0.4:* [0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214](https://www.oklink.com/amoy/address/0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214)
 
-*IPMB Token (IPMBT):* [0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214](https://www.oklink.com/amoy/address/0xFF22c94FFb6bB5d1DF18bEb5fd1dFE7583D3B214)
+*Price Feed Contract - v2.2:* [0xB2F7243b6C5f3A3660941BB77bf82D274E664587](https://www.oklink.com/amoy/address/0xB2F7243b6C5f3A3660941BB77bf82D274E664587)
 
-*Price Feed Contract:* [0xB2F7243b6C5f3A3660941BB77bf82D274E664587](https://www.oklink.com/amoy/address/0xB2F7243b6C5f3A3660941BB77bf82D274E664587)
-
-*IPMB Staking Contract:* [0xE7447a5e122df20E2AcdC472CD973905867E48eb](https://www.oklink.com/amoy/address/0xE7447a5e122df20E2AcdC472CD973905867E48eb)
+*IPMB Staking Contract - v2.3:* [0xc0028bEc0A994d5D4e854b7003560063E35860fE](https://www.oklink.com/amoy/address/0xc0028bEc0A994d5D4e854b7003560063E35860fE)
 
 ## Tests
 
